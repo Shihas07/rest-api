@@ -1,14 +1,23 @@
 const express = require("express");
+const app=express()
 const User = require("../model/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+ const Produects=require("../model/proudect")
+ const bodyParser = require("body-parser");
+ const cookieParser=require("cookie-parser")
 require("dotenv").config();
+
+app.use(bodyParser.json())
+app.use(cookieParser());
 
 // Helper function to find user by email
 const findUserByEmail = async (email) => await User.findOne({ email });
 
 const home = async (req, res) => {
-  res.status(200).json({ message: "Success, this is the homepage" });
+    const produectList=await Produects.find()
+
+  res.status(200).json({ message: "Success, this is the homepage",data:produectList });
 };
 
 const getSignup = (req, res) => {
@@ -72,11 +81,41 @@ const postLogin = async (req, res) => {
       //  console.log("kf")
  }
 
+   const getProfile=async(req,res)=>{
+          try{
+            const token=req.cookies.user_jwt
+            console.log("tojen",token)
+
+             if(!token){
+             return res.status(401).json({message:"no token provided pls login"})
+             }
+             const decoded = jwt.verify(token, process.env.JWT_SECRET);
+             console.log(decoded)
+
+             const user = await User.findById(decoded.userId)
+               if(!user){
+               return res.status(401).json({message:"invalid user"})
+               }
+                res.status(200).json({userDATA:user})
+             console.log(user)
+  
+          }
+          catch(error){
+            return res.status(500).json({ message: "Server error", error: error.message });
+
+          }
+
+        
+             
+            
+   }
+
 module.exports = {
   home,
   signup,
   getSignup,
   getLogin,
   postLogin,
-  postLogout
+  postLogout,
+  getProfile
 };
