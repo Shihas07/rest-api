@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const Produect = require("../model/proudect");
-const produect = require("../model/proudect");
+
 const { findById } = require("../model/user");
 
 const home = async (req, res) => {

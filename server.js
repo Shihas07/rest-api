@@ -6,11 +6,16 @@ const adminRouter=require("./router/admin")
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cookieParser=require("cookie-parser")
+const { swaggerSpec, swaggerUi } = require('./swagger'); 
+
+
 
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use("/", userRouter);
 app.use("/admin",adminRouter)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 mongoose
   .connect("mongodb://localhost:27017/Restapi", {
